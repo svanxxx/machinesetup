@@ -1,4 +1,6 @@
-﻿#Set-ExecutionPolicy RemoteSigned -Force
+﻿#Note: run this script only as administrator!!!
+#Before runnning this scrtip execute (as admin):
+#Set-ExecutionPolicy RemoteSigned -Force
 #Set-ExecutionPolicy Unrestricted -Force
 #Set-ExecutionPolicy bypass -Force
 
@@ -8,9 +10,8 @@ function disable-service([string]$name)
 	Stop-Service $name
 	Set-Service $name -StartMode Disabled
 }
-
 #Telemetry Disable
-function Telemetry-Disable()
+function disable-Telemetry()
 {
 	New-ItemProperty -Path HKLM:\SOFTWARE\Policies\Microsoft\Windows\DataCollection -Name AllowTelemetry -PropertyType DWord -Value 0 -Force
 	disable-service "DiagTrack"
@@ -21,10 +22,10 @@ function Telemetry-Disable()
     $MyTask.Enabled = $false
 }
 #Disable Action Center
-function ActionCenter-Disable()
+function disable-ActionCenter()
 {
     New-Item HKCU:\SOFTWARE\Policies\Microsoft\Windows\Explorer -Force | New-ItemProperty -Name DisableNotificationCenter -Value 1 -Force
 }
-
-Telemetry-Disable
-ActionCenter-Disable
+disable-Telemetry
+disable-ActionCenter
+disable-service "SQLTELEMETRY"
